@@ -7,9 +7,10 @@ keywords: ucp, cli, administration, kubectl, Kubernetes
 Docker EE installs Kubernetes automatically when you install UCP, and the
 web UI enables deploying Kubernetes workloads and monitoring pods. You can
 also interact with the Kubernetes deployment by using the Kubernetes
-command-line tool, which is named kubectl.
+command-line tool, which is named kubectl, from inside or outside the cluster.
 
-To use kubectl, install the binary on a UCP manager or worker node. To access
+
+To use kubectl, install the binary on any node in the cluster (manager or worker nodes). To access
 the UCP cluster with kubectl, install the UCP client bundle.
 
 > Kubernetes on Docker for Mac 
@@ -19,28 +20,6 @@ the UCP cluster with kubectl, install the UCP client bundle.
 > separate from the Kubernetes deployment on a UCP cluster.
 > Learn how to [deploy to Kubernetes on Docker for Mac](/docker-for-mac/kubernetes.md).
 {: .important}
-
-## Install the kubectl binary
-
-Install the latest version of kubectl for Linux on the node where you want
-to control Kubernetes. You can install kubectl on both manager and worker
-nodes. Learn how to [install and set up kubectl](https://v1-8.docs.kubernetes.io/docs/tasks/tools/install-kubectl/).
-
-On any node in your UCP cluster, run the following commands.
-
-```bash
-# Get the kubectl binary.
-curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
-
-# Make the kubectl binary executable.
-chmod +x ./kubectl
-
-# Move the kubectl executable to /usr/local/bin.
-sudo mv ./kubectl /usr/local/bin/kubectl
-
-```
-
-Repeat these commands on every node that you want to control Kubernetes from.
 
 ## Install the UCP client bundle
 
@@ -57,6 +36,18 @@ to install the client bundle.
 > The connection to the server localhost:8080 was refused - did you specify the right host or port?
 > ```
 {: .warning}
+
+## Install the kubectl binary
+
+Install the version of kubectl on the node where you want
+to control Kubernetes. You can install kubectl on nodes within your cluster or outside your cluster as long as you can access UCP. Learn how to [install and set up kubectl](https://v1-8.docs.kubernetes.io/docs/tasks/tools/install-kubectl/). Before you install kubectl, you need to make sure you're installing the correct version that matches the version of Kubernetes provisioned in Docker Enterprise. You can check the version of Kubernetes using the following command (assuming you have loaded the UCP client bundle)
+
+```bash
+$ docker version --format '{{range .Server.Components}}{{if eq .Name "Kubernetes"}}{{$ver:= split .Details.gitVersion "-"}}{{index $ver 0}}{{end}}{{end}}'
+v1.8.11
+```
+
+Another method to get the Kuberenetes version is from the UCP portal by going to https://<UCP_URL>/manage/about/kubernetes and getting the `gitVersion` value.
 
 ## Confirm the connection to UCP
 
